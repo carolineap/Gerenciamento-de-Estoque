@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css?family=Kanit');
+.navbar
+{
+  background: #56ab2f;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to top, #a8e063, #56ab2f);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to top, #a8e063, #56ab2f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
+
+}
+
+.nav-link
+{
+  font-size: 20px;
+  text-transform: uppercase;
+  margin-left: 30px;
+  font-family: 'Kanit', sans-serif;
+
+}
+.container-fluid
+{
+  min-height: 500px;
+  margin: 0;
+  padding: 0;
+}
+.titulo-texto
+{
+  padding: 30px 0px;
+}
+
+.texto
+{
+  line-height: 35px;
+}
+
+.card-img-top
+{
+  min-height: 190px !important;
+}
+
+@media (min-width: 576px) {
+
+  .maps
+  {
+    width: 100% !important;
+
+  }
+}
