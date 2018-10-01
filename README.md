@@ -1,1 +1,1 @@
-# Gerenciamneto-de-Estoque
+# Gerenciamento-de-Estoque
