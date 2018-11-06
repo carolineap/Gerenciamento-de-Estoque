@@ -8,7 +8,7 @@
 <h5>Não esqueça de decrementar no Estoque os produtos ja usados!</h5>
 <h5>Confira os produtos que estão preste a vencer ou/e que estão abaixo do limite</h5>
 <div>
- <a href="{{route('user.create')}}"><span data-feather="user-plus" class="addNewProd"></span> Novo Usuário</a>
+ <a href="{{route('estoque.create')}}"><span data-feather="plus-circle" class="addNewProd"></span> Novo Produto</a>
 
 <form class="busca" style="white-space: nowrap">
 <input type="text" placeholder="buscar produto por.." maxlength="50" name="search" required>
@@ -16,6 +16,7 @@
         <option>Nome</option>
         <option>Código</option>
         <option>Categoria</option>
+        <option>Data da Compra</option>
     </select>
 <button type="submit" class="buscarBtn">Buscar</button>      
 
@@ -35,7 +36,7 @@
             <th>Validade</th>
             <th>Sub</th>
             <th>Add</th>
-            <th>Info</th>
+            <th>Edit</th>
         </tr>
     </thead>
     <tbody>
@@ -49,7 +50,7 @@
         <td>10/12/2018</td>
         <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal"><span data-feather="minus-square"></span></button></td>
         <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal"><span data-feather="plus-square"></span></button></td>
-        <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal"><span data-feather="info"></span></button></td>
+        <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal"><span data-feather="edit"></span></button></td>
     </tbody>
 
 
@@ -141,7 +142,6 @@
                     <option>L</option>
                     <option>ml</option>
                     <option>unidades</option>
-                    <option>Adicionar Uni.</option>
                 </select>
                 <h6>Produzido ou Comprado</h6>
                 <select class="selec">
