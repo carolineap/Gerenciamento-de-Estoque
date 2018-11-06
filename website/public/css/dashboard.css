@@ -98,3 +98,70 @@ body {
     border-color: transparent;
     box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
   }
+ /*
+   * Estoque
+   */
+
+.busca {
+    position: relative;
+    text-align: right;
+    margin: 0 0 3% 0;
+}
+#buscaOp{
+    border: 1px solid #ccc;
+    background-color: white;
+    margin: 0 5px 0 0;
+    padding: 5px;
+    border-radius: 3px; 
+}
+.busca input[type=text]{
+    border-radius: 3px;
+    box-shadow: inset 0;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    background-color: white;
+}
+.modal-body input[type=number], .modal-body input[type=text], .selec{
+    width: 85%;
+    border-radius: 3px;
+    box-shadow: inset 0;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    background-color: white;
+}
+.modal-body input[type=date]{
+    width: 85%;
+    border-radius: 3px;
+    box-shadow: inset 0;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}
+.buscarBtn{
+    color: white;
+    background-color: dodgerblue;
+    border: none;
+    padding: 5px;
+    border-radius: 3px;
+}
+.btnAdd{
+    background-color: white;
+    border: none;
+}
+.btnAdd:hover{
+    color: dodgerblue;
+    cursor: pointer;
+}
+.addInput{
+    width: 50% !important;
+}
+.addNewProd{
+    margin-top: 10px;
+    position: relative;
+    text-align: left;
+}

@@ -91,6 +91,15 @@ Route::group(['prefix' => 'painel', 'namespace' => 'Painel', 'middleware' => 'lo
         Route::get('/delete/{id}', 'CardapioController@delete')->name('cardapio.delete');
     });
 
+    // ESTOQUE
+    Route::group(['prefix' => 'estoque'], function() {
 
+        Route::get('/', 'EstoqueController@index')->name('estoque.index');
 
+        Route::get('/new', 'EstoqueController@create')->name('estoque.create');
+
+        Route::post('/store', 'EstoqueController@store')->name('estoque.store');
+
+        Route::get('/delete/{id}', 'EstoqueController@delete')->name('estoque.delete');
+    });
 });

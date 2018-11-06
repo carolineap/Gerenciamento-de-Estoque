@@ -50,6 +50,12 @@
                             Eventos
                           </a>
                         </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="{{route('estoque.index')}}">
+                               <span data-feather="archive"></span>
+                                Estoque
+                              </a>
+                          </li>
                       </ul>
                     </div>
                   </nav>
@@ -73,5 +79,3 @@
     <script>
             feather.replace()
           </script>
-</body>
-</html>
