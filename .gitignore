@@ -1,0 +1,15 @@
+website/node_modules
+website/public/hot
+website/public/storage
+website/storage/*.key
+website/vendor
+website/.idea
+website/.vscode
+website/nbproject
+website/.vagrant
+website/Homestead.json
+website/Homestead.yaml
+website/npm-debug.log
+website/yarn-error.log
+website/.env
+website/.phpunit.result.cache
