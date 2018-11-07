@@ -4,7 +4,7 @@
 
 @section('content')
 <p>
-    <a href="{{route('estoque.create')}}"><span data-feather="file-plus" class="addNewProd"></span> Nova Receita</a>
+    <a href="{{route('receitas.create')}}"><span data-feather="file-plus" class="addNewProd"></span> Nova Receita</a>
 </p>
 <form class="busca" style="white-space: nowrap">
 <input type="text" placeholder="buscar produto por.." maxlength="50" name="search" required>
