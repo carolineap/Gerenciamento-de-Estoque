@@ -191,10 +191,7 @@
                     html = '<td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="'+element.codProduto+'"><span data-feather="minus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'"><span data-feather="plus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'"><span data-feather="edit"></span></button></td>';
                     $("#table-body").append(html);
                 });
-                console.log(data);
-            }, "json").fail(function(data){
-                console.log(data);
-            });
+            }, "json");
     }
 
     function muda_busca1(){
