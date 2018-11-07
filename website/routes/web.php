@@ -102,4 +102,12 @@ Route::group(['prefix' => 'painel', 'namespace' => 'Painel', 'middleware' => 'lo
 
         Route::get('/delete/{id}', 'EstoqueController@delete')->name('estoque.delete');
     });
+
+    //PRATOS
+    Route::group(['prefix' => 'receitas'], function() {
+
+        Route::get('/', 'ReceitasController@index')->name('receitas.index');
+
+        Route::get('/new', 'ReceitasController@create')->name('receitas.create');
+    });
 });

@@ -181,6 +181,9 @@
             $("select[name='search']").replaceWith("<input type=\"text\" placeholder=\"busca por nome..\" maxlength=\"50\" name=\"search\"  title=\"Apenas letras\" required>");            
         }else if(opcao.localeCompare("Categoria") == 0){
             $("input[name='search']").replaceWith( "<select name= \"search\" id=\"buscaOp\"> <option value=\"Pães\">Pães</option> <option value=\"Tortas\">Tortas</option> <option value=\"Bolos\">Bolos</option> <option value=\"Doces\">Doces</option> <option value=\"Bebidas\">Bebidas</option> <option value=\"Ingrediente\">Ingrediente</option></select> ");
+        }else if(opcao.localeCompare("Data da Compra") == 0){
+            $("input[name='search']").replaceWith("<input type=\"date\" placeholder=\"data\" required>");
+            $("select[name='search']").replaceWith("<input type=\"date\" placeholder=\"data\" required>");
         }
     }
     

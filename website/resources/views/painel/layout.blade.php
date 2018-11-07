@@ -8,6 +8,7 @@
 	<title>Painel Administrativo - Jarim dos Vagalumes</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/dashboard.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 
@@ -54,6 +55,12 @@
                             <a class="nav-link" href="{{route('estoque.index')}}">
                                <span data-feather="archive"></span>
                                 Estoque
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="{{route('receitas.index')}}">
+                               <span data-feather="book-open"></span>
+                                Receitas
                               </a>
                           </li>
                       </ul>
