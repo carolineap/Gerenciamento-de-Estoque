@@ -34,73 +34,41 @@
         <td>40,00</td>
         <td>10</td>
         <td>
-            <input type="number" value="0">
+            <input type="number" value="0" style="width: 40%; vertical-align: middle; text-align: right; margin-left:15px;">
         </td>
-        <td> </td>
+        <td><button type="button" class="btnAdd"><span data-feather="plus-square"></span></button> </td>
         <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal"><span data-feather="edit"></span></button></td>
     </tbody>
     
 </table>
-<button  type="button" data-toggle="modal" data-target="#calcular" class="btn btn-primary" >Calcular quantidade de ingredientes</button>
+<button type="button"  data-toggle="modal" data-target="#lista" class="btn btn-primary" style="background-color:#F57C00; color: white;border-color:#F57C00;" >Ver Lista</button>
+<button  type="button" class="btn btn-primary">Calcular quantidade de ingredientes</button>
 
 <!-- MODAL -->
 <!-- Modal de calcular quantidade de ingredientes -->
-<div class="modal fade" id="calcular" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
-  <div class="modal-dialog modal-lg" role="document" >
+<div class="modal fade" id="lista" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+  <div class="modal-dialog" role="document" >
     <div class="modal-content" >
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"> Calcular quantidade de ingredientes</h5>
+        <h5 class="modal-title" id="exampleModalLabel"> Lista de Receitas</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
         <div class="row modal-body">
-            <div class="col-md-4 colunaCalc">
-            <h5>Quantidade necessária</h5>
-                <table class="table calc">
-                    <thead>
-                        <th>Quantidade</th>
-                        <th>Uni.</th>
-                        <th>Ingrediente</th>
-                    </thead>
-                    <tbody>
-                        <td>20</td>
-                        <td>Kg</td>
-                        <td>Macarrão</td>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-4 colunaCalc">
-            <h5>Quantidade no Estoque</h5>
-                  <table class="table calc">
-                    <thead>
-                        <th>Quantidade</th>
-                        <th>Uni.</th>
-                        <th>Ingrediente</th>
-                    </thead>
-                    <tbody>
-                        <td>10</td>
-                        <td>Kg</td>
-                        <td>Macarrão</td>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-4 colunaCalc">
-            <h5>Quantidade a Comprar</h5>
-                  <table class="table calc">
-                    <thead>
-                        <th>Quantidade</th>
-                        <th>Uni.</th>
-                        <th>Ingrediente</th>
-                    </thead>
-                    <tbody>
-                        <td>10</td>
-                        <td>Kg</td>
-                        <td>Macarrão</td>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <table class="table">
+                <thead>
+                    <th>Nome</th>
+                    <th>Qtd.</th>
+                    <th>Remover</th>
+                </thead>
+                <tbody>
+                    <td>Yakissoba</td>
+                    <td>4</td>
+                    <td> <button class="btnAdd"><span data-feather="delete"></span> Remover</button></td>
+                </tbody>
+            </table>
+            
         <div class="modal-footer">
 
         </div>
