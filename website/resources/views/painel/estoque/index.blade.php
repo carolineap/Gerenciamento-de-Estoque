@@ -10,15 +10,15 @@
 <div>
  <a href="{{route('estoque.create')}}"><span data-feather="plus-circle" class="addNewProd"></span> Novo Produto</a>
 
-<form class="busca" style="white-space: nowrap">
+<form class="busca" id="search" style="white-space: nowrap">
 <input type="text" placeholder="buscar produto por.." maxlength="50" name="search" required>
     <select id="buscaOp" name="buscaOp" onchange="muda_busca1()">
-        <option>Nome</option>
-        <option>Código</option>
-        <option>Categoria</option>
-        <option>Data da Compra</option>
+        <option value="nome">Nome</option>
+        <option value="codigo">Código</option>
+        <option value="categoria">Categoria</option>
+        <option value="data">Data da Compra</option>
     </select>
-<button type="submit" class="buscarBtn">Buscar</button>
+<button type="submit" class="buscarBtn" onclick="buscaProduto(event)">Buscar</button>
 
 </form>
 </div>
@@ -39,7 +39,7 @@
             <th>Edit</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="table-body">
         @foreach($estoque as $item)
             <td>{{$item->codProduto}}</td>
             <td>{{$item->nomeProduto}}</td>
@@ -49,9 +49,9 @@
             <td>{{$item->precoItem}}</td>
             <td>{{$item->dataCompra}}</td>
             <td>{{$item->dataValidade}}</td>
-            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal"><span data-feather="minus-square"></span></button></td>
-            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal"><span data-feather="plus-square"></span></button></td>
-            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal"><span data-feather="edit"></span></button></td>
+            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="{{$item->codProduto}}"><span data-feather="minus-square"></span></button></td>
+            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="{{$item->codProduto}}"><span data-feather="plus-square"></span></button></td>
+            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="{{$item->codProduto}}"><span data-feather="edit"></span></button></td>
         @endforeach
     </tbody>
 
@@ -172,21 +172,47 @@
   </div>
 </div>
 <script>
+    function buscaProduto(e){
+        e.preventDefault();
+        let search;
+        if($("#search :first-child").is("select"))
+            search = $("#search > select:eq(0) > option:selected").val();
+
+        else
+            search = $("#search > input:eq(0)").val();
+
+        let buscaOp = $("#buscaOp > option:selected").val();
+
+        $.post("{{route('estoque.search')}}", {search: search, buscaOp: buscaOp, _token: '{{csrf_token()}}'},
+            function(data){
+                $("#table-body").empty();
+                let html;
+                data.forEach(function(element){
+                    html = '<td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="'+element.codProduto+'"><span data-feather="minus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'"><span data-feather="plus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'"><span data-feather="edit"></span></button></td>';
+                    $("#table-body").append(html);
+                });
+                console.log(data);
+            }, "json").fail(function(data){
+                console.log(data);
+            });
+    }
+
     function muda_busca1(){
         var opcao = document.getElementsByName("buscaOp")[0].value;
 
-        if(opcao.localeCompare("Código") == 0){
+        if(opcao.localeCompare("codigo") == 0){
             $("input[name='search']").replaceWith("<input type=\"number\" placeholder=\"buscar por código..\" maxlength=\"10\" name=\"search\" oninput=\"replace_not_number('1')\" pattern=\"\\d{1,10}\" title=\"Apenas números. 1 a 10 dígitos.\" required>");
             $("select[name='search']").replaceWith("<input type=\"number\" placeholder=\"buscar por código..\" maxlength=\"10\" name=\"search\" oninput=\"replace_not_number('1')\" pattern=\"\\d{1,10}\" title=\"Apenas números. 1 a 10 dígitos.\" required>");
-        }else if(opcao.localeCompare("Nome") == 0){
+        }else if(opcao.localeCompare("nome") == 0){
             $("input[name='search']").replaceWith("<input type=\"text\" placeholder=\"busca por nome..\" maxlength=\"50\" name=\"search\"  title=\"Apenas letras\" required>");
-            $("select[name='search']").replaceWith("<input type=\"text\" placeholder=\"busca por nome..\" maxlength=\"50\" name=\"search\"  title=\"Apenas letras\" required>");
-        }else if(opcao.localeCompare("Categoria") == 0){
+            $("select[name='search']").replaceWith("<input type=\"text\" placeholder=\"busca por nome..\" maxlength=\"50\" name=\"search\" title=\"Apenas letras\" required>");
+        }else if(opcao.localeCompare("categoria") == 0){
             s = '';
             @foreach(\App\CategoriaProduto::all() as $categoria)
                 s+='<option value="{{$categoria->categoria}}">{{$categoria->categoria}}</option>'
             @endforeach
-            $("input[name='search']").replaceWith( '<select name= "search" id="buscaOp"> ' + s + ' </select> ');
+            $("input[name='search']").replaceWith( '<select name= "search"> ' + s + ' </select> ');
+            $("select[name='search']").replaceWith( '<select name= "search"> ' + s + ' </select> ');
         }
     }
 

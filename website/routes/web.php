@@ -96,6 +96,8 @@ Route::group(['prefix' => 'painel', 'namespace' => 'Painel', 'middleware' => 'lo
 
         Route::get('/', 'EstoqueController@index')->name('estoque.index');
 
+        Route::post('/search', 'EstoqueController@ajaxBuscaProduto')->name('estoque.search');
+
         Route::get('/new', 'EstoqueController@create')->name('estoque.create');
 
         Route::post('/store', 'EstoqueController@store')->name('estoque.store');
