@@ -4,7 +4,7 @@
 
 @section('content')
 
-<h3>Bem Vindo ao Estoque Ana</h3>
+<h3>Bem Vindo ao Estoque <?php echo (explode(" ", \Auth::user()->name, 2))[0]; ?></h3>
 <h5>Não esqueça de decrementar no Estoque os produtos ja usados!</h5>
 <h5>Confira os produtos que estão preste a vencer ou/e que estão abaixo do limite</h5>
 <div>
@@ -18,7 +18,7 @@
         <option>Categoria</option>
         <option>Data da Compra</option>
     </select>
-<button type="submit" class="buscarBtn">Buscar</button>      
+<button type="submit" class="buscarBtn">Buscar</button>
 
 </form>
 </div>
@@ -40,17 +40,19 @@
         </tr>
     </thead>
     <tbody>
-        <td>14</td>
-        <td>Arroz</td>
-        <td>Tio Jão</td>
-        <td>Grãos</td>
-        <td>10</td>
-        <td>5,00</td>
-        <td>5/06/2018</td>
-        <td>10/12/2018</td>
-        <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal"><span data-feather="minus-square"></span></button></td>
-        <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal"><span data-feather="plus-square"></span></button></td>
-        <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal"><span data-feather="edit"></span></button></td>
+        @foreach($estoque as $item)
+            <td>{{$item->codProduto}}</td>
+            <td>{{$item->nomeProduto}}</td>
+            <td>{{$item->marca}}</td>
+            <td>{{$item->categoria}}</td>
+            <td>{{$item->quantidadeItem}}</td>
+            <td>{{$item->precoItem}}</td>
+            <td>{{$item->dataCompra}}</td>
+            <td>{{$item->dataValidade}}</td>
+            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal"><span data-feather="minus-square"></span></button></td>
+            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal"><span data-feather="plus-square"></span></button></td>
+            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal"><span data-feather="edit"></span></button></td>
+        @endforeach
     </tbody>
 
 
@@ -172,17 +174,21 @@
 <script>
     function muda_busca1(){
         var opcao = document.getElementsByName("buscaOp")[0].value;
-       
+
         if(opcao.localeCompare("Código") == 0){
             $("input[name='search']").replaceWith("<input type=\"number\" placeholder=\"buscar por código..\" maxlength=\"10\" name=\"search\" oninput=\"replace_not_number('1')\" pattern=\"\\d{1,10}\" title=\"Apenas números. 1 a 10 dígitos.\" required>");
             $("select[name='search']").replaceWith("<input type=\"number\" placeholder=\"buscar por código..\" maxlength=\"10\" name=\"search\" oninput=\"replace_not_number('1')\" pattern=\"\\d{1,10}\" title=\"Apenas números. 1 a 10 dígitos.\" required>");
         }else if(opcao.localeCompare("Nome") == 0){
             $("input[name='search']").replaceWith("<input type=\"text\" placeholder=\"busca por nome..\" maxlength=\"50\" name=\"search\"  title=\"Apenas letras\" required>");
-            $("select[name='search']").replaceWith("<input type=\"text\" placeholder=\"busca por nome..\" maxlength=\"50\" name=\"search\"  title=\"Apenas letras\" required>");            
+            $("select[name='search']").replaceWith("<input type=\"text\" placeholder=\"busca por nome..\" maxlength=\"50\" name=\"search\"  title=\"Apenas letras\" required>");
         }else if(opcao.localeCompare("Categoria") == 0){
-            $("input[name='search']").replaceWith( "<select name= \"search\" id=\"buscaOp\"> <option value=\"Pães\">Pães</option> <option value=\"Tortas\">Tortas</option> <option value=\"Bolos\">Bolos</option> <option value=\"Doces\">Doces</option> <option value=\"Bebidas\">Bebidas</option> <option value=\"Ingrediente\">Ingrediente</option></select> ");
+            s = '';
+            @foreach(\App\CategoriaProduto::all() as $categoria)
+                s+='<option value="{{$categoria->categoria}}">{{$categoria->categoria}}</option>'
+            @endforeach
+            $("input[name='search']").replaceWith( '<select name= "search" id="buscaOp"> ' + s + ' </select> ');
         }
     }
-    
-</script>    
+
+</script>
 @endsection
