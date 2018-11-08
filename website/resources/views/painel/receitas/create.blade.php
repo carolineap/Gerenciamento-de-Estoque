@@ -68,9 +68,8 @@
         cell5.innerHTML = "<button type=\"button\" class=\"btnAdd\"><span data-feather=\"plus-square\"></span></button>";
     }
     function editarQtd(){
-        var table = document.getElementById("listaIngred");
-        var cell4 = row.insertCell(2);
-        cell4.innerHTML = "<input type=\"number\" placeholder=\"Quantidade\"style=\"width:50%\">"
+        //var x = document.getElementById("listaIngred").rows[0].cells;
+        //x[2].innerHTML = "<input type=\"number\" placeholder=\"Quantidade\"style=\"width:50%\">"";
     }
 </script>
 @endsection

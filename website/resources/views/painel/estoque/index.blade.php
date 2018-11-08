@@ -210,8 +210,11 @@
             @foreach(\App\CategoriaProduto::all() as $categoria)
                 s+='<option value="{{$categoria->categoria}}">{{$categoria->categoria}}</option>'
             @endforeach
-            $("input[name='search']").replaceWith( '<select name= "search"> ' + s + ' </select> ');
-            $("select[name='search']").replaceWith( '<select name= "search"> ' + s + ' </select> ');
+            $("input[name='search']").replaceWith( '<select name= "search" class="selec" style="width: 17%;"> ' + s + ' </select> ');
+            $("select[name='search']").replaceWith( '<select name= "search" class="selec" style="width: 17%;"> ' + s + ' </select> ');
+        }else if(opcao.localeCompare("data") == 0){
+            $("input[name='search']").replaceWith("<input type=\"date\"  name=\"search\" required>");
+            $("select[name='search']").replaceWith("<input type=\"date\" name=\"search\" required>");
         }
     }
 
