@@ -4,9 +4,9 @@
 
 @section('content')
 
-<h3>Bem Vindo ao Estoque <?php echo (explode(" ", \Auth::user()->name, 2))[0]; ?></h3>
-<h5>Não esqueça de decrementar no Estoque os produtos ja usados!</h5>
-<h5>Confira os produtos que estão preste a vencer ou/e que estão abaixo do limite</h5>
+<h3>Bem-vindo(a) ao estoque, <?php echo (explode(" ", \Auth::user()->name, 2))[0]; ?></h3>
+<h5>Não esqueça de decrementar no estoque os produtos já usados!</h5>
+<h5>Confira os produtos que estão prestes a vencer e/ou que estão abaixo do limite</h5>
 <div>
  <a href="{{route('estoque.create')}}"><span data-feather="plus-circle" class="addNewProd"></span> Novo Produto</a>
 
@@ -190,10 +190,14 @@
                 $("#table-body").empty();
                 let html;
                 data.forEach(function(element){
-                    html = '<tr><td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="'+element.codProduto+'"><span data-feather="minus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'"><span data-feather="plus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'"><span data-feather="edit"></span></button></td></tr>';
+                    html = '<tr><td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button style="display:block;" type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="'+element.codProduto+'">-</button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'">+</span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'">Alt</span></button></td></tr>';
                     $("#table-body").append(html);
                 });
-            }, "json");
+                if(data.length==0)
+                    alert("Nenhum resultado encontrado.");
+            }, "json").fail(function(data){
+                console.log(data);
+            });
     }
 
     function muda_busca1(){
