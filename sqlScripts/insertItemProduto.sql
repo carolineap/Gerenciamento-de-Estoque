@@ -1,7 +1,7 @@
 CREATE TABLE itemProduto (
 	codProduto SERIAL NOT NULL,
 	dataValidade DATE NOT NULL,
-	dataCompra DATE DEFAULT date(CURRENT_TIMESTAMP) NOT NULL,
+	dataCompra TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	quantidadeItem INT NOT NULL DEFAULT 0,
 	precoItem REAL,
 	unidade VARCHAR(50) NOT NULL,
@@ -61,7 +61,6 @@ INSERT INTO itemProduto(codProduto, dataValidade, unidade, quantidadeItem) VALUE
 INSERT INTO itemProduto(codProduto, dataValidade, unidade, quantidadeItem) VALUES (49, '2018/11/23', 'lt', 5);
 INSERT INTO itemProduto(codProduto, dataValidade, unidade, quantidadeItem) VALUES (50, '2018/11/23', 'lt', 2);
 INSERT INTO itemProduto(codProduto, dataValidade, unidade, quantidadeItem) VALUES (51, '2018/11/23', 'unidade', 5);
-INSERT INTO itemProduto(codProduto, dataValidade, unidade, quantidadeItem) VALUES (52, '2018/11/23', 'ml', 500);
 
 
 
