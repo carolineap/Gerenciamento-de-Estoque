@@ -76,8 +76,8 @@ class EstoqueController extends Controller
                                                 ->orderBy('dataValidade')
                                                 ->get();
                 foreach ($itensProduto as $itemProduto) {
-                    $aux['dataValidade'] = $itemProduto->dataValidade;
-                    $aux['dataCompra'] = $itemProduto->dataCompra;
+                    $aux['dataValidade'] = \Carbon\Carbon::parse($itemProduto->dataValidade)->format('d/m/Y');
+                    $aux['dataCompra'] = \Carbon\Carbon::parse($itemProduto->dataCompra)->format('d/m/Y');;
                     $aux['quantidadeItem'] = $itemProduto->quantidadeItem;
                     $aux['precoItem'] = $itemProduto->precoItem;
                     $aux['unidade'] = $itemProduto->unidade;

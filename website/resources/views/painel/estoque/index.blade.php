@@ -41,17 +41,19 @@
     </thead>
     <tbody id="table-body">
         @foreach($estoque as $item)
-            <td>{{$item->codProduto}}</td>
-            <td>{{$item->nomeProduto}}</td>
-            <td>{{$item->marca}}</td>
-            <td>{{$item->categoria}}</td>
-            <td>{{$item->quantidadeItem}}</td>
-            <td>{{$item->precoItem}}</td>
-            <td>{{$item->dataCompra}}</td>
-            <td>{{$item->dataValidade}}</td>
-            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="{{$item->codProduto}}"><span data-feather="minus-square"></span></button></td>
-            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="{{$item->codProduto}}"><span data-feather="plus-square"></span></button></td>
-            <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="{{$item->codProduto}}"><span data-feather="edit"></span></button></td>
+            <tr>
+                <td>{{$item->codProduto}}</td>
+                <td>{{$item->nomeProduto}}</td>
+                <td>{{$item->marca}}</td>
+                <td>{{$item->categoria}}</td>
+                <td>{{$item->quantidadeItem}}</td>
+                <td>{{$item->precoItem}}</td>
+                <td>{{$item->dataCompra}}</td>
+                <td>{{$item->dataValidade}}</td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="{{$item->codProduto}}"><span data-feather="minus-square"></span></button></td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="{{$item->codProduto}}"><span data-feather="plus-square"></span></button></td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="{{$item->codProduto}}"><span data-feather="edit"></span></button></td>
+            </tr>
         @endforeach
     </tbody>
 
@@ -188,7 +190,7 @@
                 $("#table-body").empty();
                 let html;
                 data.forEach(function(element){
-                    html = '<td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="'+element.codProduto+'"><span data-feather="minus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'"><span data-feather="plus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'"><span data-feather="edit"></span></button></td>';
+                    html = '<tr><td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="'+element.codProduto+'"><span data-feather="minus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'"><span data-feather="plus-square"></span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'"><span data-feather="edit"></span></button></td></tr>';
                     $("#table-body").append(html);
                 });
             }, "json");
