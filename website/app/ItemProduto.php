@@ -12,7 +12,5 @@ class ItemProduto extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['dataValidade', 'dataCompra', 'quantidadeItem', 'precoItem', 'unidade'];
-
-    protected $guarded = ['codProduto'];
+    protected $fillable = ['codProduto', 'dataValidade', 'dataCompra', 'quantidadeItem', 'precoItem', 'unidade'];
 }
