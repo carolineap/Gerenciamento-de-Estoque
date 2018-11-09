@@ -31,6 +31,10 @@
             </select>
         </div>
         <div class="col-md-6">
+             <h6>Categoria</h6>
+            <select class="selec">
+                <option>bla</option>
+            </select>
             <h6>Quantidade:</h6>
             <input type="number" placeholder="Apenas número" min="0" value="0" step="0.5" name="quantidadeItem">
            <h6>Data de Validade:</h6>

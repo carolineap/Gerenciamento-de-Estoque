@@ -153,8 +153,13 @@
                 <option>Comprado</option>
                 <option>Produzido</option>
                 </select>
+                <h6 style="text-align: left;margin-top: 20px">Preço Total: R$ 200,00</h6>
             </div>
             <div class="col-md-6">
+                <h6>Categoria:</h6>
+                <select class="selec">
+                    <option>bla</option>
+                </select>
                 <h6>Quantidade:</h6>
                 <input type="number" placeholder="Apenas número" min="0" value="0" step="0.5">
                <h6>Data de Validade:</h6>
@@ -163,8 +168,7 @@
                 <input type="date" placeholder="Data dd/mm/aaaa" >
                 <h6>Preço Unitário:</h6>
                 <input type="number" placeholder="Preço separado por vírgula" min="0" step="0.01">
-                <h6>Preço Total</h6>
-                <h6>R$ 200,00</h6>
+                
             </div>
             </div>
             <div class="modal-footer">
