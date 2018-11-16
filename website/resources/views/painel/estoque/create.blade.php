@@ -10,6 +10,8 @@
 
 <form class="newEstoque" method="post" action="{{route('estoque.store')}}">
 
+    @csrf
+
     <div class="row modal-body">
         <div class="col-md-6">
             <h6>Nome:</h6>
@@ -32,8 +34,10 @@
         </div>
         <div class="col-md-6">
              <h6>Categoria</h6>
-            <select class="selec">
-                <option>bla</option>
+            <select class="selec" name="categoria">
+                @foreach($categorias as $categoria)
+                    <option value="{{$categoria->categoria}}">{{$categoria->categoria}}</option>
+                @endforeach
             </select>
             <h6>Quantidade:</h6>
             <input type="number" placeholder="Apenas número" min="0" value="0" step="0.5" name="quantidadeItem">

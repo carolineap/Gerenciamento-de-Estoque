@@ -18,8 +18,10 @@ class EstoqueController extends Controller
                     'categoria' => $produto->categoria, 'marca' => $produto->marca];
 
             $itensProduto = \App\ItemProduto::where('codProduto', $produto->codProduto)
-                                            ->where('quantidadeItem', '<=', $produto->limite)
-                                            ->where('dataValidade', '<=', \Carbon\Carbon::now()->addWeek()->format('Y-m-d'))
+                                            ->where(function($q) use ($produto){
+                                                $q->where('quantidadeItem', '<=', $produto->limite)
+                                                  ->orWhere('dataValidade', '<=', \Carbon\Carbon::now('America/Sao_Paulo')->addWeek()->format('Y-m-d'));
+                                            })
                                             ->orderBy('dataValidade')
                                             ->get();
             foreach ($itensProduto as $itemProduto) {
@@ -91,7 +93,8 @@ class EstoqueController extends Controller
     public function create()
     {
         $unidades = \App\Unidade::all();
-        return view('painel.estoque.create')->with('unidades', $unidades);
+        $categorias = \App\CategoriaProduto::all();
+        return view('painel.estoque.create')->with(['unidades' => $unidades, 'categorias' => $categorias]);
     }
 
     public function store(Request $request){
@@ -102,11 +105,11 @@ class EstoqueController extends Controller
             }
             $data = ['codProduto' => $produto->codProduto, 'dataValidade' => $request->dataValidade, 'dataCompra' => $request->dataCompra, 'quantidadeItem' => $request->quantidadeItem, 'precoItem' => $request->precoItem];
             \App\ItemProduto::create($data);
-            return redirect()->action('EstoqueController@index');
+            return redirect()->action('Painel\EstoqueController@index');
         }
 
         $produto = ['limite' => $request->limite,'nomeProduto' => $request->nomeProduto,
-                    'fornecido' => $request->fornecido, 'categoria' => $request->categoria,
+                    'fornecido' => ($request->fornecido==='1'?1:0), 'categoria' => $request->categoria,
                     'marca' => $request->marca];
 
         \App\Produto::create($produto);
@@ -117,7 +120,23 @@ class EstoqueController extends Controller
 
         \App\ItemProduto::create($itemProduto);
 
-        return redirect()->action('EstoqueController@index');
+        return redirect()->action('Painel\EstoqueController@index');
+    }
+
+    public function ajaxSubtraiProduto(Request $request){
+        $dataValidade = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dataValidade);
+        $dataCompra = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dataCompra);
+        \App\ItemProduto::where('codProduto', $request->codProduto)
+                        ->whereDate('dataCompra', $dataCompra->format('Y-m-d'))
+                        ->whereDate('dataValidade', $dataValidade->format('Y-m-d'))
+                        ->update(['quantidadeItem' => $request->quantidadeItem]);
+
+        $produto = \App\ItemProduto::where('codProduto', $request->codProduto)
+                        ->whereDate('dataCompra', $dataCompra->format('Y-m-d'))
+                        ->whereDate('dataValidade', $dataValidade->format('Y-m-d'))
+                        ->first();
+
+        return response()->json($produto);
     }
 
 }

@@ -42,17 +42,17 @@
     <tbody id="table-body">
         @foreach($estoque as $item)
             <tr>
-                <td>{{$item->codProduto}}</td>
-                <td>{{$item->nomeProduto}}</td>
-                <td>{{$item->marca}}</td>
-                <td>{{$item->categoria}}</td>
-                <td>{{$item->quantidadeItem}}</td>
-                <td>{{$item->precoItem}}</td>
-                <td>{{$item->dataCompra}}</td>
-                <td>{{$item->dataValidade}}</td>
-                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="{{$item->codProduto}}" data-quant="{{$item->quantidadeItem}}" onclick="passIdToModal(this)"><span data-feather="minus-square"></span></button></td>
-                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="{{$item->codProduto}}"><span data-feather="plus-square"></span></button></td>
-                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="{{$item->codProduto}}"><span data-feather="edit"></span></button></td>
+                <td>{{$item["codProduto"]}}</td>
+                <td>{{$item["nomeProduto"]}}</td>
+                <td>{{(isset($item["marca"])?$item["marca"]:'null')}}</td>
+                <td>{{$item["categoria"]}}</td>
+                <td>{{$item["quantidadeItem"]}}</td>
+                <td>{{(isset($item["precoItem"])?$item["precoItem"]:'null')}}</td>
+                <td>{{$item["dataCompra"]}}</td>
+                <td>{{$item["dataValidade"]}}</td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-cod="{{$item['codProduto']}}" data-compra="{{$item['dataCompra']}}" data-venc="{{$item['dataValidade']}}" data-quant="{{$item['quantidadeItem']}}" onclick="passIdToModal(this)"><span data-feather="minus-square"></span></button></td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="{{$item['codProduto']}}"><span data-feather="plus-square"></span></button></td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="{{$item['codProduto']}}"><span data-feather="edit"></span></button></td>
             </tr>
         @endforeach
     </tbody>
@@ -72,13 +72,16 @@
       </div>
         <form>
         <input type="hidden" name="codProduto" value="0">
+        <input type="hidden" name="dataCompra" value="0">
+        <input type="hidden" name="dataValidade" value="0">
+        <input type="hidden" name="quantTotalItem" value="0">
         <div class="modal-body">
                 <h6>Quantidade a ser decrementada:</h6>
               <input name="quantidadeItem" type="number" placeholder="Apenas número" min="0" step="0.5" value="0" required style="width: 50%;">
-                <button type="button" class="btnAdd" data-quant="0" style="background-color:#F57C00; color: white">Tudo</button>
+                <button type="button" class="btnAdd" style="background-color:#F57C00; color: white">Tudo</button>
             </div>
             <div class="modal-footer">
-                <button type="submit"  class="btn btn-primary">Salvar</button>
+                <button type="submit"  class="btn btn-primary" onclick="subQuantItem(event)">Salvar</button>
             </div>
      </form>
     </div>
@@ -168,7 +171,7 @@
                 <input type="date" placeholder="Data dd/mm/aaaa" >
                 <h6>Preço Unitário:</h6>
                 <input type="number" placeholder="Preço separado por vírgula" min="0" step="0.01">
-                
+
             </div>
             </div>
             <div class="modal-footer">
@@ -179,11 +182,45 @@
   </div>
 </div>
 <script>
+    /*function getQuant(){
+        let quant = $("#subModal > div > div > form > div > button:first").data('quant');
+        console.log(quant);
+        $("#subModal > div > div > form > div > input[name='quantidadeItem']").val(quant);
+    }*/
+
+    let index;
+
+    function subQuantItem(event){
+        event.preventDefault();
+        const id = $("#subModal > div > div > form > input[name='codProduto']").val();
+        const compra = $("#subModal > div > div > form > input[name='dataCompra']").val();
+        const venc = $("#subModal > div > div > form > input[name='dataValidade']").val();
+        const quantRemover = parseFloat($("#subModal > div > div > form > div > input[name='quantidadeItem']")
+                                .val());
+        const quantTotal = parseFloat($("#subModal > div > div > form > input[name='quantTotalItem']").val());
+        const quant = quantTotal-quantRemover;
+
+        $.post("{{route('estoque.sub')}}", {codProduto: id, dataCompra: compra, dataValidade: venc,
+            quantidadeItem: quant, _token: '{{csrf_token()}}'},
+            function(data){
+                $("tr:eq("+index+") > td:eq(4)").text(data.quantidadeItem);
+            }, "json").fail(function(data){
+                console.log(data);
+            });
+    }
+
     function passIdToModal(element){
-        let id = $(element).data('id');
+        index = $("tr").index($(element).parent().parent());
+        let id = $(element).data('cod');
+        let compra = $(element).data('compra');
+        let venc = $(element).data('venc');
         let quant = $(element).data('quant');
         $("#subModal > div > div > form > input[name='codProduto']").val(id);
-        $("#subModal > div > div > form > div > button").attr('data-quant', quant);
+        $("#subModal > div > div > form > input[name='dataCompra']").val(compra);
+        $("#subModal > div > div > form > input[name='dataValidade']").val(venc);
+        $("#subModal > div > div > form > input[name='quantTotalItem']").val(quant);
+        $("#subModal > div > div > form > div > input[name='quantidadeItem']").val(quant);
+        $("#subModal > div > div > form > div > input[name='quantidadeItem']").attr('max', quant);
     }
 
     function buscaProduto(e){
@@ -202,7 +239,7 @@
                 $("#table-body").empty();
                 let html;
                 data.forEach(function(element){
-                    html = '<tr><td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button style="display:block;" type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-id="'+element.codProduto+'" data-quant="'+element.quantidadeItem+'" onclick="passIdToModal(this)">-</button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'">+</span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'">Alt</span></button></td></tr>';
+                    html = '<tr><td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button style="display:block;" type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-cod="'+element.codProduto+'" data-compra="'+element.dataCompra+'" data-venc="'+element.dataValidade+'" data-quant="'+element.quantidadeItem+'" onclick="passIdToModal(this)">-</button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'">+</span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'">Alt</span></button></td></tr>';
                     $("#table-body").append(html);
                 });
                 if(data.length==0)
