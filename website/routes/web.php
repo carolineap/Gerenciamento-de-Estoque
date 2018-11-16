@@ -100,6 +100,8 @@ Route::group(['prefix' => 'painel', 'namespace' => 'Painel', 'middleware' => 'lo
 
         Route::post('/sub', 'EstoqueController@ajaxSubtraiProduto')->name('estoque.sub');
 
+        Route::post('/info', 'EstoqueController@ajaxAtualizaProduto')->name('estoque.info');
+
         Route::get('/new', 'EstoqueController@create')->name('estoque.create');
 
         Route::post('/store', 'EstoqueController@store')->name('estoque.store');
@@ -113,5 +115,7 @@ Route::group(['prefix' => 'painel', 'namespace' => 'Painel', 'middleware' => 'lo
         Route::get('/', 'ReceitasController@index')->name('receitas.index');
 
         Route::get('/new', 'ReceitasController@create')->name('receitas.create');
+
+        Route::post('/search', 'ReceitasController@ajaxBuscaReceita')->name('receitas.search');
     });
 });

@@ -50,9 +50,9 @@
                 <td>{{(isset($item["precoItem"])?$item["precoItem"]:'null')}}</td>
                 <td>{{$item["dataCompra"]}}</td>
                 <td>{{$item["dataValidade"]}}</td>
-                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-cod="{{$item['codProduto']}}" data-compra="{{$item['dataCompra']}}" data-venc="{{$item['dataValidade']}}" data-quant="{{$item['quantidadeItem']}}" onclick="passIdToModal(this)"><span data-feather="minus-square"></span></button></td>
-                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="{{$item['codProduto']}}"><span data-feather="plus-square"></span></button></td>
-                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="{{$item['codProduto']}}"><span data-feather="edit"></span></button></td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-cod="{{$item['codProduto']}}" data-compra="{{$item['dataCompra']}}" data-venc="{{$item['dataValidade']}}" data-quant="{{$item['quantidadeItem']}}" onclick="passIdToModal(this, 'sub')"><span data-feather="minus-square"></span></button></td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="{{$item['codProduto']}}" onclick="passIdToModal(this, 'add')"><span data-feather="plus-square"></span></button></td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="{{$item['codProduto']}}" data-limite="{{$item['limite']}}" data-unidade="{{$item['unidade']}}" data-fornecido="{{$item['fornecido']}}" onclick="passIdToModal(this, 'info')"><span data-feather="edit"></span></button></td>
             </tr>
         @endforeach
     </tbody>
@@ -135,47 +135,50 @@
         </button>
       </div>
         <form>
+            <input type="hidden" name="codProduto" value="0">
+            <input type="hidden" name="oldDataCompra" value="0">
+            <input type="hidden" name="oldDataValidade" value="0">
         <div class="row modal-body">
             <div class="col-md-6">
                 <h6>Nome:</h6>
-                <input type="text" placeholder="máximo 50 caracteres" maxlength="50">
+                <input type="text" placeholder="máximo 50 caracteres" maxlength="50" name="nomeProduto">
                 <h6>Marca:</h6>
-                <input type="text" placeholder="máximo 50 caracteres" maxlength="50">
+                <input type="text" placeholder="máximo 50 caracteres" maxlength="50" name="marca">
                 <h6>Limite mínimo:</h6>
-                <input type="number" placeholder="Apenas número" min="0" value="0" >
+                <input type="number" placeholder="Apenas número" min="0" value="0" name="limite">
                 <h6>Unidade de Medida:</h6>
-                 <select class="selec">
-                    <option>Kg</option>
-                    <option>g</option>
-                    <option>L</option>
-                    <option>ml</option>
-                    <option>unidades</option>
+                 <select class="selec" name="unidade">
+                    @foreach(\App\Unidade::all() as $unidade)
+                        <option value="{{$unidade->unidade}}">{{$unidade->unidade}}</option>
+                    @endforeach
                 </select>
                 <h6>Produzido ou Comprado</h6>
-                <select class="selec">
-                <option>Comprado</option>
-                <option>Produzido</option>
+                <select class="selec" name="fornecido">
+                    <option value="0">Comprado</option>
+                    <option value="1">Produzido</option>
                 </select>
-                <h6 style="text-align: left;margin-top: 20px">Preço Total: R$ 200,00</h6>
+                <h6 style="text-align: left;margin-top: 20px" id="precoTotal"></h6>
             </div>
             <div class="col-md-6">
-                <h6>Categoria:</h6>
-                <select class="selec">
-                    <option>bla</option>
+                <h6>Categoria</h6>
+                <select class="selec" name="categoria">
+                    @foreach(\App\CategoriaProduto::all() as $categoria)
+                        <option value="{{$categoria->categoria}}">{{$categoria->categoria}}</option>
+                    @endforeach
                 </select>
                 <h6>Quantidade:</h6>
-                <input type="number" placeholder="Apenas número" min="0" value="0" step="0.5">
-               <h6>Data de Validade:</h6>
-                <input type="date" placeholder="Data dd/mm/aaaa" >
+                <input type="number" placeholder="Apenas número" min="0" value="0" step="0.5" name="quantidadeItem">
+                <h6>Data de Validade:</h6>
+                <input type="date" placeholder="Data dd/mm/aaaa" name="dataValidade">
                 <h6>Data da Compra:</h6>
-                <input type="date" placeholder="Data dd/mm/aaaa" >
+                <input type="date" placeholder="Data dd/mm/aaaa" name="dataCompra">
                 <h6>Preço Unitário:</h6>
-                <input type="number" placeholder="Preço separado por vírgula" min="0" step="0.01">
+                <input type="number" placeholder="Preço separado por vírgula" min="0" step="0.01" name="precoItem">
 
             </div>
             </div>
             <div class="modal-footer">
-                <button type="submit"  class="btn btn-primary">Salvar</button>
+                <button type="submit"  class="btn btn-primary" onclick="updateDadosItem(event)">Salvar</button>
             </div>
      </form>
     </div>
@@ -189,6 +192,55 @@
     }*/
 
     let index;
+
+    function updateDadosItem(event){
+        event.preventDefault();
+        const id = $("infoModal > div > div > form > input[name='codProduto']").val();
+        const oldCompra = $("#infoModal > div > div > form > input[name='oldDataValidade']").val();
+        const oldVenc = $("#infoModal > div > div > form > input[name='oldDataCompra']").val();
+
+        const nomeProduto = $("#infoModal > div > div > form > div > div:eq(0) > input[name='nomeProduto']").val();
+        const marca = $("#infoModal > div > div > form > div > div:eq(0) > input[name='marca']").val();
+        const limite = $("#infoModal > div > div > form > div > div:eq(0) > input[name='limite']").val();
+        const unidade = $("#infoModal > div > div > form > div > div:eq(0) > select[name='unidade']").val();
+        const fornecido = $("#infoModal > div > div > form > div > div:eq(0) > select[name='fornecido']").val();
+        const categoria = $("#infoModal > div > div > form > div > div:eq(1) > select[name='categoria']").val();
+        const quantidadeItem = $("#infoModal > div > div > form > div > div:eq(1) > input[name='quantidadeItem']").val();
+        const dataValidade = $("#infoModal > div > div > form > div > div:eq(1) > input[name='dataValidade']").val();
+        const dataCompra = $("#infoModal > div > div > form > div > div:eq(1) > input[name='dataCompra']").val();
+        const precoItem = $("#infoModal > div > div > form > div > div:eq(1) > input[name='precoItem']").val();
+
+        const sndMsg = {
+            id: id,
+            oldCompra: oldCompra,
+            oldVenc: oldVenc,
+            nomeProduto: nomeProduto,
+            marca: marca,
+            limite: limite,
+            unidade: unidade,
+            fornecido: fornecido,
+            categoria: categoria,
+            quantidadeItem: quantidadeItem,
+            dataValidade: dataValidade,
+            dataCompra: dataCompra,
+            precoItem: precoItem,
+            _token: '{{csrf_token()}}'
+        };
+
+        $.post("{{route('estoque.info')}}", sndMsg,
+            function(data){
+                $("tr:eq("+index+") > td:eq(0)").text(data.codProduto);
+                $("tr:eq("+index+") > td:eq(1)").text(data.nomeProduto);
+                $("tr:eq("+index+") > td:eq(2)").text(data.marca);
+                $("tr:eq("+index+") > td:eq(3)").text(data.categoria);
+                $("tr:eq("+index+") > td:eq(4)").text(data.quantidadeItem);
+                $("tr:eq("+index+") > td:eq(5)").text(data.precoItem);
+                $("tr:eq("+index+") > td:eq(6)").text(data.dataCompra);
+                $("tr:eq("+index+") > td:eq(7)").text(data.dataValidade);
+            }, "json").fail(function(data){
+                console.log(data);
+        });
+    }
 
     function subQuantItem(event){
         event.preventDefault();
@@ -206,21 +258,52 @@
                 $("tr:eq("+index+") > td:eq(4)").text(data.quantidadeItem);
             }, "json").fail(function(data){
                 console.log(data);
-            });
+        });
     }
 
-    function passIdToModal(element){
+    function passIdToModal(element, type){
         index = $("tr").index($(element).parent().parent());
         let id = $(element).data('cod');
-        let compra = $(element).data('compra');
-        let venc = $(element).data('venc');
-        let quant = $(element).data('quant');
-        $("#subModal > div > div > form > input[name='codProduto']").val(id);
-        $("#subModal > div > div > form > input[name='dataCompra']").val(compra);
-        $("#subModal > div > div > form > input[name='dataValidade']").val(venc);
-        $("#subModal > div > div > form > input[name='quantTotalItem']").val(quant);
-        $("#subModal > div > div > form > div > input[name='quantidadeItem']").val(quant);
-        $("#subModal > div > div > form > div > input[name='quantidadeItem']").attr('max', quant);
+        if(type==="sub"){
+            let compra = $(element).data('compra');
+            let venc = $(element).data('venc');
+            let quant = $(element).data('quant');
+            $("#subModal > div > div > form > input[name='codProduto']").val(id);
+            $("#subModal > div > div > form > input[name='dataCompra']").val(compra);
+            $("#subModal > div > div > form > input[name='dataValidade']").val(venc);
+            $("#subModal > div > div > form > input[name='quantTotalItem']").val(quant);
+            $("#subModal > div > div > form > div > input[name='quantidadeItem']").val(quant);
+            $("#subModal > div > div > form > div > input[name='quantidadeItem']").attr('max', quant);
+        }
+        else if(type==="add"){
+
+        }
+        else{
+            let aux = $("tr:eq("+index+")");
+            const dataValidade = aux.find("td:eq(7)").text().split("/");
+            const dataCompra = aux.find("td:eq(6)").text().split("/");
+            let preco = aux.find("td:eq(5)").text()==="null"?"0":aux.find("td:eq(5)").text()
+            let marca = aux.find("td:eq(2)").text()==="null"?"":aux.find("td:eq(2)").text()
+            $("#infoModal > div > div > form > div > div:eq(0) > input[name='nomeProduto']").val(aux.find("td:eq(1)").text());
+            $("#infoModal > div > div > form > div > div:eq(0) > input[name='marca']").val(marca);
+            $("#infoModal > div > div > form > div > div:eq(0) > input[name='limite']").val($(element).data('limite'));
+            $("#infoModal > div > div > form > div > div:eq(0) > select[name='unidade'] > option[value='"+$(element).data('unidade')+"']").attr('selected', 'selected');
+            $("#infoModal > div > div > form > div > div:eq(0) > select[name='fornecido'] > option[value='"+$(element).data('fornecido')+"']").attr('selected', 'selected');
+            $("#infoModal > div > div > form > div > div:eq(1) > select[name='categoria'] > option[value='"+aux.find("td:eq(3)").text()+"']").attr('selected', 'selected');
+            $("#infoModal > div > div > form > div > div:eq(1) > input[name='quantidadeItem']").val(aux.find("td:eq(4)").text());
+            $("#infoModal > div > div > form > div > div:eq(1) > input[name='dataValidade']").val(dataValidade[2]+"-"+dataValidade[1]+"-"+dataValidade[0]);
+            $("#infoModal > div > div > form > div > div:eq(1) > input[name='dataCompra']").val(dataCompra[2]+"-"+dataCompra[1]+"-"+dataCompra[0]);
+            $("#infoModal > div > div > form > div > div:eq(1) > input[name='precoItem']").val(preco);
+            $("#infoModal > div > div > form > input[name='codProduto']").val(aux.find("td:eq(0)").text());
+            $("#infoModal > div > div > form > input[name='oldDataValidade']").val(aux.find("td:eq(7)").text());
+            $("#infoModal > div > div > form > input[name='oldDataCompra']").val(aux.find("td:eq(6)").text());
+            if(preco!=="0"){
+                $("#precoTotal").text("Preço total: R$ "+(parseFloat(preco)*parseFloat(aux.find("td:eq(4)").text())).toFixed(2));
+            }
+            else{
+                $("#precoTotal").text("Não é possível calcular.");
+            }
+        }
     }
 
     function buscaProduto(e){
@@ -239,7 +322,7 @@
                 $("#table-body").empty();
                 let html;
                 data.forEach(function(element){
-                    html = '<tr><td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button style="display:block;" type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-cod="'+element.codProduto+'" data-compra="'+element.dataCompra+'" data-venc="'+element.dataValidade+'" data-quant="'+element.quantidadeItem+'" onclick="passIdToModal(this)">-</button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'">+</span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'">Alt</span></button></td></tr>';
+                    html = '<tr><td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button style="display:block;" type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-cod="'+element.codProduto+'" data-compra="'+element.dataCompra+'" data-venc="'+element.dataValidade+'" data-quant="'+element.quantidadeItem+'" onclick="passIdToModal(this, \'sub\')">-</button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'" onclick="passIdToModal(this, \'add\')">+</span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'" data-limite="'+element.limite+'" data-unidade="'+element.unidade+'" data-fornecido="'+element.fornecido+'" onclick="passIdToModal(this, \'info\')">Alt</span></button></td></tr>';
                     $("#table-body").append(html);
                 });
                 if(data.length==0)

@@ -139,4 +139,9 @@ class EstoqueController extends Controller
         return response()->json($produto);
     }
 
+    public function ajaxAtualizaProduto(Request $request){
+        $oldDataValidade = \Carbon\Carbon::createFromFormat('d/m/Y', $request->oldDataValidade);
+        $oldDataCompra = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dataCompra);
+    }
+
 }
