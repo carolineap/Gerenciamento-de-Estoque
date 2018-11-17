@@ -29,4 +29,44 @@ class receitasController extends Controller
         return response()->json($receitas);
     }
 
+    public function ajaxInfoReceita(Request $request){
+        $listaReceitas = json_decode($request->listaReceitas);
+
+        $resp = [];
+
+        foreach($listaReceitas as $receita){
+            $itensPrato = \App\ItemPrato::where('codPrato', $receita->codigo)->get();
+
+            foreach($itensPrato as $itemPrato){
+                $produto = \App\Produto::where('codProduto', $itemPrato->codProduto)->first();
+
+                $itensProduto = \App\ItemProduto::where('codProduto', $itemPrato->codProduto)
+                                                ->where('unidade', $itemPrato->unidade)
+                                                ->get();
+
+                $total = 0;
+
+                foreach($itensProduto as $itemProduto){
+                    $total+=$itemProduto->quantidadeItem;
+                }
+
+                if(!isset($resp[$produto->nomeProduto])){
+                    $resp[$produto->nomeProduto] = [];
+                }
+                if(!isset($resp[$produto->nomeProduto][$itemPrato->unidade])){
+                    $resp[$produto->nomeProduto][$itemPrato->unidade] = [];
+                    $resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeProduto'] = $receita->quntReceitas*$itemPrato->quantidadeProduto;
+                    $resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeItem'] = $total;
+                    $resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeFaltando'] = ($resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeProduto']-$resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeItem']>0?$resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeProduto']-$resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeItem']:0);
+                }
+                else{
+                    $resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeProduto'] += $receita->quntReceitas*$itemPrato->quantidadeProduto;
+                    $resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeFaltando'] = ($resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeProduto']-$resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeItem']>0?$resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeProduto']-$resp[$produto->nomeProduto][$itemPrato->unidade]['quantidadeItem']:0);
+                }
+            }
+        }
+
+        return response()->json($resp);
+    }
+
 }

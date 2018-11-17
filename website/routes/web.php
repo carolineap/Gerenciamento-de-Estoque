@@ -117,5 +117,7 @@ Route::group(['prefix' => 'painel', 'namespace' => 'Painel', 'middleware' => 'lo
         Route::get('/new', 'ReceitasController@create')->name('receitas.create');
 
         Route::post('/search', 'ReceitasController@ajaxBuscaReceita')->name('receitas.search');
+
+        Route::post('/info', 'ReceitasController@ajaxInfoReceita')->name('receitas.info');
     });
 });
