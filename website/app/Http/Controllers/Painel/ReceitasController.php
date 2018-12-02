@@ -15,7 +15,25 @@ class receitasController extends Controller
 
     public function create()
     {
-        return view('painel.receitas.create');
+        $unidades = \App\Unidade::all();
+        $produtos = \App\Produto::all();
+        return view('painel.receitas.create')->with(['unidades' => $unidades, 'produtos' => $produtos]);
+    }
+
+    public function store(Request $request){
+        $data = ['nomePrato' => $request->nome, 'precoPrato' => $request->preco, 'quantidadePessoas' => $request->quntPessoas];
+
+        $receita = \App\Receita::create($data);
+
+        $i = 0;
+
+        while(isset($request['codIngrediente'.$i])){
+            $data = ['codPrato' => $receita->codPrato, 'codProduto' => $request['codIngrediente'.$i], 'quantidadeProduto' => $request['quntIngrediente'.$i], 'unidade' => $request['unidade'.$i]];
+            \App\ItemPrato::create($data);
+            $i++;
+        }
+
+        return redirect()->route('receitas.index');
     }
 
     public function ajaxBuscaReceita(Request $request){
