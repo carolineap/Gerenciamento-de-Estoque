@@ -123,7 +123,7 @@ class EstoqueController extends Controller
         return redirect()->action('Painel\EstoqueController@index');
     }
 
-    public function ajaxSubtraiProduto(Request $request){
+    public function ajaxAlteraQuantProduto(Request $request){
         $dataValidade = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dataValidade);
         $dataCompra = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dataCompra);
         \App\ItemProduto::where('codProduto', $request->codProduto)

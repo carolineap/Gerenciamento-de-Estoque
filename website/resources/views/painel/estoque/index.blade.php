@@ -51,7 +51,7 @@
                 <td>{{$item["dataCompra"]}}</td>
                 <td>{{$item["dataValidade"]}}</td>
                 <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-cod="{{$item['codProduto']}}" data-compra="{{$item['dataCompra']}}" data-venc="{{$item['dataValidade']}}" data-quant="{{$item['quantidadeItem']}}" onclick="passIdToModal(this, 'sub')"><span data-feather="minus-square"></span></button></td>
-                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="{{$item['codProduto']}}" onclick="passIdToModal(this, 'add')"><span data-feather="plus-square"></span></button></td>
+                <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-cod="{{$item['codProduto']}}" data-compra="{{$item['dataCompra']}}" data-venc="{{$item['dataValidade']}}" data-quant="{{$item['quantidadeItem']}}" onclick="passIdToModal(this, 'add')"><span data-feather="plus-square"></span></button></td>
                 <td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="{{$item['codProduto']}}" data-limite="{{$item['limite']}}" data-unidade="{{$item['unidade']}}" data-fornecido="{{$item['fornecido']}}" onclick="passIdToModal(this, 'info')"><span data-feather="edit"></span></button></td>
             </tr>
         @endforeach
@@ -98,29 +98,18 @@
         </button>
       </div>
         <form>
-        <div class="modal-body">
-                <h6>Quantidade a ser incrementada:</h6>
-              <input class="addInput" type="number" placeholder="Apenas número" min="0" value="0" step="0.5">
-                <h6>Unidade de medida: </h6>
-                <select class="selec" style="width: 50%;">
-                    <option>Kg</option>
-                    <option>g</option>
-                    <option>L</option>
-                    <option>ml</option>
-                    <option>unidades</option>
-                    <option>Adicionar Uni.</option>
-                </select>
-                <h6>Data de Validade:</h6>
-                <input class="addInput" type="date" placeholder="Data dd/mm/aaaa" >
-                <h6>Data da Compra:</h6>
-                <input class="addInput" type="date" placeholder="Data dd/mm/aaaa" >
-                <h6>Preço Unitário:</h6>
-                <input class="addInput" type="number" placeholder="Preço separado por vírgula" min="0" step="0.5">
-            </div>
-            <div class="modal-footer">
-                <button type="submit"  class="btn btn-primary">Salvar</button>
-            </div>
-     </form>
+            <input type="hidden" name="codProduto" value="0">
+            <input type="hidden" name="dataCompra" value="0">
+            <input type="hidden" name="dataValidade" value="0">
+            <input type="hidden" name="quantTotalItem" value="0">
+            <div class="modal-body">
+                    <h6>Quantidade a ser incrementada:</h6>
+                  <input name="quantidadeItem" value="0" type="number" placeholder="Apenas número" min="0" step="0.5" value="0" required style="width: 50%;">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit"  class="btn btn-primary" onclick="addQuantItem(event)">Salvar</button>
+                </div>
+         </form>
     </div>
   </div>
 </div>
@@ -255,7 +244,26 @@
         const quantTotal = parseFloat($("#subModal > div > div > form > input[name='quantTotalItem']").val());
         const quant = quantTotal-quantRemover;
 
-        $.post("{{route('estoque.sub')}}", {codProduto: id, dataCompra: compra, dataValidade: venc,
+        $.post("{{route('estoque.change')}}", {codProduto: id, dataCompra: compra, dataValidade: venc,
+            quantidadeItem: quant, _token: '{{csrf_token()}}'},
+            function(data){
+                $("tr:eq("+index+") > td:eq(4)").text(data.quantidadeItem);
+            }, "json").fail(function(data){
+                console.log(data);
+        });
+    }
+
+    function addQuantItem(event){
+        event.preventDefault();
+        const id = $("#addModal > div > div > form > input[name='codProduto']").val();
+        const compra = $("#addModal > div > div > form > input[name='dataCompra']").val();
+        const venc = $("#addModal > div > div > form > input[name='dataValidade']").val();
+        const quantAdicionar = parseFloat($("#addModal > div > div > form > div > input[name='quantidadeItem']")
+                                .val());
+        const quantTotal = parseFloat($("#addModal > div > div > form > input[name='quantTotalItem']").val());
+        const quant = quantTotal+quantAdicionar;
+
+        $.post("{{route('estoque.change')}}", {codProduto: id, dataCompra: compra, dataValidade: venc,
             quantidadeItem: quant, _token: '{{csrf_token()}}'},
             function(data){
                 $("tr:eq("+index+") > td:eq(4)").text(data.quantidadeItem);
@@ -279,7 +287,13 @@
             $("#subModal > div > div > form > div > input[name='quantidadeItem']").attr('max', quant);
         }
         else if(type==="add"){
-
+            let compra = $(element).data('compra');
+            let venc = $(element).data('venc');
+            let quant = $(element).data('quant');
+            $("#addModal > div > div > form > input[name='codProduto']").val(id);
+            $("#addModal > div > div > form > input[name='dataCompra']").val(compra);
+            $("#addModal > div > div > form > input[name='dataValidade']").val(venc);
+            $("#addModal > div > div > form > input[name='quantTotalItem']").val(quant);
         }
         else{
             let aux = $("tr:eq("+index+")");
@@ -325,7 +339,7 @@
                 $("#table-body").empty();
                 let html;
                 data.forEach(function(element){
-                    html = '<tr><td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button style="display:block;" type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-cod="'+element.codProduto+'" data-compra="'+element.dataCompra+'" data-venc="'+element.dataValidade+'" data-quant="'+element.quantidadeItem+'" onclick="passIdToModal(this, \'sub\')">-</button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-id="'+element.codProduto+'" onclick="passIdToModal(this, \'add\')">+</span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'" data-limite="'+element.limite+'" data-unidade="'+element.unidade+'" data-fornecido="'+element.fornecido+'" onclick="passIdToModal(this, \'info\')">Alt</span></button></td></tr>';
+                    html = '<tr><td>'+element.codProduto+'</td><td>'+element.nomeProduto+'</td><td>'+element.marca+'</td><td>'+element.categoria+'</td><td>'+element.quantidadeItem+'</td><td>'+element.precoItem+'</td><td>'+element.dataCompra+'</td><td>'+element.dataValidade+'</td><td><button style="display:block;" type="button" class="btnAdd" data-toggle="modal" data-target="#subModal" data-cod="'+element.codProduto+'" data-compra="'+element.dataCompra+'" data-venc="'+element.dataValidade+'" data-quant="'+element.quantidadeItem+'" onclick="passIdToModal(this, \'sub\')">-</button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#addModal" data-cod="'+element.codProduto+'" data-compra="'+element.dataCompra+'" data-venc="'+element.dataValidade+'" data-quant="'+element.quantidadeItem+'" onclick="passIdToModal(this, \'add\')">+</span></button></td><td><button type="button" class="btnAdd" data-toggle="modal" data-target="#infoModal" data-id="'+element.codProduto+'" data-limite="'+element.limite+'" data-unidade="'+element.unidade+'" data-fornecido="'+element.fornecido+'" onclick="passIdToModal(this, \'info\')">Alt</span></button></td></tr>';
                     $("#table-body").append(html);
                 });
                 if(data.length==0)
