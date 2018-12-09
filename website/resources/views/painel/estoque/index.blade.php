@@ -247,7 +247,10 @@
         $.post("{{route('estoque.change')}}", {codProduto: id, dataCompra: compra, dataValidade: venc,
             quantidadeItem: quant, _token: '{{csrf_token()}}'},
             function(data){
-                $("tr:eq("+index+") > td:eq(4)").text(data.quantidadeItem);
+                if(data!='deleted')
+                    $("tr:eq("+index+") > td:eq(4)").text(data.quantidadeItem);
+                else
+                    $("tr:eq("+index+")").remove();
             }, "json").fail(function(data){
                 console.log(data);
         });

@@ -126,17 +126,18 @@ class EstoqueController extends Controller
     public function ajaxAlteraQuantProduto(Request $request){
         $dataValidade = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dataValidade);
         $dataCompra = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dataCompra);
-        \App\ItemProduto::where('codProduto', $request->codProduto)
-                        ->whereDate('dataCompra', $dataCompra->format('Y-m-d'))
-                        ->whereDate('dataValidade', $dataValidade->format('Y-m-d'))
-                        ->update(['quantidadeItem' => $request->quantidadeItem]);
-
-        $produto = \App\ItemProduto::where('codProduto', $request->codProduto)
+        $itemProduto = \App\ItemProduto::where('codProduto', $request->codProduto)
                         ->whereDate('dataCompra', $dataCompra->format('Y-m-d'))
                         ->whereDate('dataValidade', $dataValidade->format('Y-m-d'))
                         ->first();
+        if($request->quantidadeItem==0){
+            $itemProduto->delete();
+            return response()->json('deleted');
+        }
 
-        return response()->json($produto);
+        $itemProduto->update(['quantidadeItem' => $request->quantidadeItem]);
+
+        return response()->json($itemProduto);
     }
 
     public function ajaxAtualizaProduto(Request $request){
