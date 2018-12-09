@@ -140,8 +140,26 @@ class EstoqueController extends Controller
     }
 
     public function ajaxAtualizaProduto(Request $request){
-        $oldDataValidade = \Carbon\Carbon::createFromFormat('d/m/Y', $request->oldDataValidade);
-        $oldDataCompra = \Carbon\Carbon::createFromFormat('d/m/Y', $request->dataCompra);
+        $dataValidade = \Carbon\Carbon::createFromFormat('d/m/Y', $request->oldVenc);
+        $dataCompra = \Carbon\Carbon::createFromFormat('d/m/Y', $request->oldCompra);
+        $codProduto = $request->id;
+
+        $dadosProduto = ['nomeProduto' => $request->nomeProduto, 'marca' => $request->marca, 'limite' => $request->limite, 'fornecido' => $request->fornecido, 'categoria' => $request->categoria];
+
+        $dadosItemProduto = ['unidade' => $request->unidade, 'quantidadeItem' => $request->quantidadeItem, 'dataValidade' => $request->dataValidade, 'dataCompra' => $request->dataCompra, 'precoItem' => $request->precoItem];
+
+        $produto = \App\Produto::where('codProduto', $codProduto)->first();
+        $produto->update($dadosProduto);
+
+        $itemProduto = \App\ItemProduto::where('codProduto', $codProduto)
+                        ->whereDate('dataCompra', $dataCompra->format('Y-m-d'))
+                        ->whereDate('dataValidade', $dataValidade->format('Y-m-d'))
+                        ->first();
+        $itemProduto->update($dadosItemProduto);
+
+        $dadosJson = ['nomeProduto' => $produto->nomeProduto, 'marca' => $produto->marca, 'categoria' => $produto->categoria, 'quantidadeItem' => $itemProduto->quantidadeItem, 'dataValidade' => \Carbon\Carbon::parse($itemProduto->dataValidade)->format('d/m/Y'), 'dataCompra' => \Carbon\Carbon::parse($itemProduto->dataCompra)->format('d/m/Y'), 'precoItem' => $itemProduto->precoItem];
+
+        return response()->json($dadosJson);
     }
 
 }

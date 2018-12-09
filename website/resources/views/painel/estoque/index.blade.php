@@ -195,9 +195,12 @@
 
     function updateDadosItem(event){
         event.preventDefault();
-        const id = $("infoModal > div > div > form > input[name='codProduto']").val();
-        const oldCompra = $("#infoModal > div > div > form > input[name='oldDataValidade']").val();
-        const oldVenc = $("#infoModal > div > div > form > input[name='oldDataCompra']").val();
+        const id = $("#infoModal > div > div > form > input[name='codProduto']").val();
+        const oldVenc = $("#infoModal > div > div > form > input[name='oldDataValidade']").val();
+        const oldCompra = $("#infoModal > div > div > form > input[name='oldDataCompra']").val();
+
+        console.log(oldCompra);
+        console.log(oldVenc);
 
         const nomeProduto = $("#infoModal > div > div > form > div > div:eq(0) > input[name='nomeProduto']").val();
         const marca = $("#infoModal > div > div > form > div > div:eq(0) > input[name='marca']").val();
@@ -229,7 +232,7 @@
 
         $.post("{{route('estoque.info')}}", sndMsg,
             function(data){
-                $("tr:eq("+index+") > td:eq(0)").text(data.codProduto);
+                console.log(data);
                 $("tr:eq("+index+") > td:eq(1)").text(data.nomeProduto);
                 $("tr:eq("+index+") > td:eq(2)").text(data.marca);
                 $("tr:eq("+index+") > td:eq(3)").text(data.categoria);
